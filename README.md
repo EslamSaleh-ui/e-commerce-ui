@@ -1,6 +1,12 @@
 # e-commerce 
 
-A new Flutter project.
+- Getx state management
+
+- Cached database
+
+- responsive size
+
+- clean and testable code
 
 ## Getting Started
 
