@@ -22,10 +22,14 @@ class MyApp extends StatelessWidget{
         floatingActionButton:  FloatingActionButton(
           backgroundColor:HexColor('#d93e11') ,
           onPressed: ()async{
+            if(   get_x.total.value>0){
             await manager.removeByKey('key');
             get_x.total.value=0;
             Toast.show('Order Saved and InProgress',gravity: Toast.bottom,duration: Toast.lengthLong);
-            current_index.value = 0;
+            current_index.value = 0;}
+            else {
+              Toast.show('There’s no thing in cart',gravity: Toast.bottom,duration: Toast.lengthLong);
+            }
           },
 
           child:Column(mainAxisAlignment: MainAxisAlignment.center,

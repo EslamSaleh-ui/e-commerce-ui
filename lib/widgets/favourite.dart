@@ -1,9 +1,9 @@
-// ignore_for_file: unrelated_type_equality_checks
+// ignore_for_file: unrelated_type_equality_checks, camel_case_types, use_key_in_widget_constructors
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:task/constant/constants.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task/customs/deal.dart';
 import 'package:task/models/Deal.dart';
 
 class favourite extends StatelessWidget{
@@ -15,40 +15,29 @@ class favourite extends StatelessWidget{
       return FutureBuilder(
         future: get_x.get_Data('deals')
         , builder: (context, data) {
-      if (data.connectionState == ConnectionState.waiting || !data.hasData) {
-        return Container();
+      if (data.connectionState == ConnectionState.waiting ) {
+        return const Center(child: CircularProgressIndicator());
+      } else if(!data.hasData) {
+        return const Center(child: Text('No Favourites Found'));
       } else if (data.hasError) {
         return const Center(child: Text('Something went error'));
       }
-      List<dynamic> deal = data.data as List<dynamic>;
-      return   ListView(
-              scrollDirection: Axis.vertical, children: deal.map((e)  {
+      List<dynamic> dealed = data.data as List<dynamic>;
+      return  AnimationLimiter(child:  ListView(
+              scrollDirection: Axis.vertical,
+          children: dealed.map((e)  {
             Deal d=Deal.fromMap(e);
-            return   FutureBuilder(future:get_x.found_favourite('1',d.id),
+            return  AnimationConfiguration.staggeredList(position: dealed.indexOf(e),
+                duration: const Duration(milliseconds: 500),
+                child: SlideAnimation(child:
+                FutureBuilder(future:get_x.found_favourite('1',d.id),
                 builder: (c,data){
                   if(data.connectionState==ConnectionState.waiting || data.data=='no' ) {
                    return  Container();  }
-                 return   Padding(padding: const EdgeInsets.all(10),child:
-                 Row(children:[
-                   Container(
-                       decoration: BoxDecoration(color: HexColor('#${d.color}'),
-                           borderRadius: BorderRadius.circular(15)),
-                       height: (MediaQuery.of(context).size.height / 15) + 40,
-                       width: MediaQuery.of(context).size.width / 5
-                   )
-                   ,Padding(padding: const EdgeInsets.all(5),child:
-                   Column(crossAxisAlignment: CrossAxisAlignment.start,
-                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                       children:[Text(d.deal.split('/').first,style: const TextStyle(fontWeight: FontWeight.bold),),
-                         Text(d.deal.split('/').last),
-                         Row(children: [const Icon(Icons.location_on,color:Colors.grey),Text(d.distance,style:const TextStyle(color:Colors.grey))],)
-                         ,  Row(children: [const Icon(FontAwesomeIcons.dollarSign,size: 10,color:Colors.red),Text('${d.deal_price.toString()}       ',style:const TextStyle(color:Colors.red)),Text(d.price.toString(),style:const TextStyle(color:Colors.grey,decoration: TextDecoration. lineThrough)),
-                         ])
-                       ])
-                   )]  ));
-                }             );
+                 return FadeInAnimation(child:  deal(deal_: d,f_: false));
+                }            ) ));
           }).toList()
-          )  ;
+          ) );
     }
     );  });
   }}

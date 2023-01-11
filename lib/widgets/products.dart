@@ -1,9 +1,9 @@
-// ignore_for_file: unrelated_type_equality_checks
+// ignore_for_file: unrelated_type_equality_checks, camel_case_types, use_key_in_widget_constructors
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:task/constant/constants.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task/customs/product.dart';
 import 'package:task/models/Prouct.dart';
 import 'package:toast/toast.dart';
 
@@ -17,43 +17,35 @@ class products extends StatelessWidget{
           return FutureBuilder(
               future: get_x.get_Data('products')
               , builder: (context, data) {
-            if (data.connectionState == ConnectionState.waiting || !data.hasData) {
-              return Container();
+            if (data.connectionState == ConnectionState.waiting ) {
+              return const Center(child:CircularProgressIndicator());
             } else if (data.hasError) {
               return const Center(child: Text('Something went error'));
             }
+            else if(!data.hasData) {
+              return const Center(child: Text('No Data Found'));}
             List<dynamic> deal = data.data as List<dynamic>;
-            return   ListView(
-                    scrollDirection: Axis.vertical, children: deal.map((e)  {
+            return  AnimationLimiter(child:
+            ListView(
+                    scrollDirection: Axis.vertical,
+                children: deal.map((e)  {
                   Product d=Product.fromMap(e);
                   if(category_type.value !='All' && category_type.value !=d.category) {
                     return Container();
                   }else if((category_type.value ==d.category && category_type.value !='All' )|| category_type.value =='All') {
-                    return  GestureDetector(onTap: () async {
-                         String resultof_add=await  get_x.add_cart(d);
-                           Toast.show(resultof_add,gravity: Toast.bottom,duration: Toast.lengthLong);
-                      },child:
-                      Padding(padding: const EdgeInsets.all(10),child:
-                        Row(children:[
-                          Container(
-                              decoration: BoxDecoration(color: HexColor('#${d.color}'),
-                                  borderRadius: BorderRadius.circular(15)),
-                              height: (MediaQuery.of(context).size.height / 15) + 40,
-                              width: MediaQuery.of(context).size.width / 5
-                          )
-                          ,Padding(padding: const EdgeInsets.all(5),child:
-                          Column(crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children:[Text(d.name,style: const TextStyle(fontWeight: FontWeight.bold),),
-                               Text(d.quantity,style:const TextStyle(color:Colors.grey))
-                                ,  Row(children: [const Icon(FontAwesomeIcons.dollarSign,size: 10,color:Colors.red),Text(d.price.toString(),style:const TextStyle(color:Colors.red))
-                                ])
-                              ])
-                          )]  ))       );
+                    return    AnimationConfiguration.staggeredList(position: deal.indexOf(e),
+                        duration: const Duration(milliseconds: 500),
+                        child: SlideAnimation(child: FadeInAnimation(child: product(d:d,f: () async {
+                      String resultAdd = await get_x.add_cart(d);
+                      get_x.count_product(d, 1);
+                      Toast.show(resultAdd, gravity: Toast.bottom,
+                          duration: Toast.lengthLong);
+                    } ))
+                        ) );
                   }
-
                 }).toList()
-                );
+
+            ));
           }
           );  });
   }}

@@ -32,10 +32,12 @@ dependencies:
   http:
   hexcolor:
   toast:
+  blinking_text:   
   countnumberbutton:
   responsive_sizer:
   font_awesome_flutter:
   data_cache_manager:
+  flutter_staggered_animations:
   animated_bottom_navigation_bar:
   flutter:
     sdk: flutter
