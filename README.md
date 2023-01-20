@@ -8,6 +8,8 @@
 
 - clean and testable code
 
+- rest api
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
