@@ -8,7 +8,9 @@
 
 - clean and testable code
 
-- rest api
+- rest api 
+
+- unit test
 
 ## Getting Started
 
